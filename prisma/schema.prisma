@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model SiteSettings {
+  id               String  @id @default("main")
+  heroHeadline     String  @default("[{\"text\":\"I\",\"gradient\":false},{\"text\":\"Build\",\"gradient\":false},{\"text\":\"Machine\",\"gradient\":false},{\"text\":\"Learning\",\"gradient\":false},{\"text\":\"Systems\",\"gradient\":false},{\"text\":\"That\",\"gradient\":false},{\"text\":\"See,\",\"gradient\":true},{\"text\":\"Predict\",\"gradient\":true},{\"text\":\"&\",\"gradient\":true},{\"text\":\"Ship.\",\"gradient\":true}]")
+  heroSubtext      String  @default("AI/ML Engineer specializing in computer vision, predictive modeling, and deploying ML solutions from research to production.")
+  availabilityText String  @default("Available for new opportunities")
+  availabilityActive Boolean @default(true)
+  aboutBio         String  @default("")
+  aboutSkills      String  @default("[]")
+  cvUrl            String?
+  profileImageUrl  String?
+  contactEmail     String  @default("awais@example.com")
+  contactLocation  String  @default("Shahkot, Punjab, Pakistan")
+  githubUrl        String?
+  linkedinUrl      String?
+  updatedAt        DateTime @updatedAt @default(now())
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String
+  description String
+  tags        String   @default("[]")
+  imageUrl    String?
+  githubUrl   String?
+  liveUrl     String?
+  gradient    String   @default("from-coral/20 via-purple/10 to-violet/20")
+  sortOrder   Int      @default(0)
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experience {
+  id        String   @id @default(cuid())
+  type      String
+  role      String
+  company   String
+  period    String
+  bullets   String   @default("[]")
+  sortOrder Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Stat {
+  id        String @id @default(cuid())
+  value     Float
+  label     String
+  suffix    String @default("")
+  decimals  Int    @default(0)
+  sortOrder Int    @default(0)
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AdminUser {
+  id           String @id @default(cuid())
+  email        String @unique
+  passwordHash String
+}

@@ -1,26 +1,224 @@
 @import "tailwindcss";
 
+/* ─── CSS Variable Theming ─── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light theme (default) */
+  --base: #FAFAFA;
+  --surface: #F0F0F5;
+  --surface-light: #E8E8F0;
+  --content: #1A1A2E;
+  --content-dim: #6B6B80;
+  --subtle: rgba(0, 0, 0, 0.08);
+  --subtle-hover: rgba(0, 0, 0, 0.04);
+  --subtle-hover-strong: rgba(0, 0, 0, 0.06);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-card-bg: rgba(255, 255, 255, 0.6);
+  --glass-card-border: rgba(0, 0, 0, 0.06);
+  --scrollbar-track: #FAFAFA;
+  --scrollbar-thumb: rgba(0, 0, 0, 0.1);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.2);
+  --selection-bg: rgba(107, 91, 255, 0.2);
+  --selection-color: #1A1A2E;
+  --input-bg: rgba(0, 0, 0, 0.03);
+  --input-focus-bg: rgba(107, 91, 255, 0.04);
+  --tag-bg: rgba(0, 0, 0, 0.04);
+  --overlay-bg: rgba(0, 0, 0, 0.03);
 }
 
+.dark {
+  /* Dark theme */
+  --base: #0A0A0F;
+  --surface: #12121A;
+  --surface-light: #1A1A2E;
+  --content: #F5F5F7;
+  --content-dim: #9A9AA5;
+  --subtle: rgba(255, 255, 255, 0.08);
+  --subtle-hover: rgba(255, 255, 255, 0.04);
+  --subtle-hover-strong: rgba(255, 255, 255, 0.06);
+  --glass-bg: rgba(18, 18, 26, 0.7);
+  --glass-card-bg: rgba(26, 26, 46, 0.6);
+  --glass-card-border: rgba(255, 255, 255, 0.06);
+  --scrollbar-track: #0A0A0F;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
+  --selection-bg: rgba(107, 91, 255, 0.35);
+  --selection-color: #F5F5F7;
+  --input-bg: rgba(255, 255, 255, 0.04);
+  --input-focus-bg: rgba(107, 91, 255, 0.02);
+  --tag-bg: rgba(255, 255, 255, 0.04);
+  --overlay-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Design Tokens (Tailwind v4 @theme) ─── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors — bound to CSS variables */
+  --color-base: var(--base);
+  --color-surface: var(--surface);
+  --color-surface-light: var(--surface-light);
+  --color-content: var(--content);
+  --color-content-dim: var(--content-dim);
+  --color-subtle: var(--subtle);
+  --color-coral: #FF6B6B;
+  --color-purple: #C86DD7;
+  --color-violet: #6B5BFF;
+
+  /* Fonts */
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Animations */
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-float-1: float-1 4s ease-in-out infinite;
+  --animate-float-2: float-2 3.5s ease-in-out infinite;
+  --animate-float-3: float-3 3s ease-in-out infinite;
+  --animate-pulse-dot: pulse-dot 2s ease-in-out infinite;
+  --animate-scroll-dot: scroll-dot 1.5s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Keyframes ─── */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes float-1 {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(8px); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+@keyframes scroll-dot {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(8px); opacity: 0.2; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+/* ─── Base Styles ─── */
+html {
+  scroll-behavior: smooth;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--base);
+  color: var(--content);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-color);
+}
+
+/* ─── Utility Classes ─── */
+.gradient-text {
+  background: linear-gradient(135deg, #FF6B6B 0%, #C86DD7 50%, #6B5BFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #FF6B6B 0%, #C86DD7 50%, #6B5BFF 100%);
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card {
+  background: var(--glass-card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-card-border);
+}
+
+/* Hero glow card — unified gradient shadow that matches the card shape */
+.hero-glow {
+  position: relative;
+}
+
+.hero-glow::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 40px;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.3) 0%, rgba(200, 109, 215, 0.25) 50%, rgba(107, 91, 255, 0.3) 100%);
+  filter: blur(28px);
+  z-index: -1;
+  animation: glow-pulse 6s ease-in-out infinite;
+  transition: opacity 0.3s ease;
+}
+
+.dark .hero-glow::before {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.35) 0%, rgba(200, 109, 215, 0.3) 50%, rgba(107, 91, 255, 0.35) 100%);
+  filter: blur(32px);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ─── Focus Styles ─── */
+*:focus-visible {
+  outline: 2px solid #6B5BFF;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-marquee,
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3,
+  .animate-pulse-dot,
+  .animate-scroll-dot {
+    animation: none !important;
+  }
+
+  .hero-glow::before {
+    animation: none !important;
+  }
 }
