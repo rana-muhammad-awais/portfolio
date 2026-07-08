@@ -6,6 +6,8 @@ import { Menu, X, Sun, Moon } from "lucide-react";
 import MagneticButton from "./MagneticButton";
 import { useTheme } from "./ThemeProvider";
 
+import { SiteSettings } from "../generated/prisma/client";
+
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
@@ -16,7 +18,7 @@ const NAV_LINKS = [
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-export default function Navbar() {
+export default function Navbar({ settings }: { settings?: SiteSettings | null }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -59,7 +61,7 @@ export default function Navbar() {
               transition={{ duration: 0.6, ease }}
               className="relative text-2xl font-heading font-bold tracking-tight"
             >
-              <span className="gradient-text">MA</span>
+              <span className="gradient-text">Muhammad Awais</span>
               <span className="absolute -bottom-1 left-0 w-full h-[2px] gradient-bg rounded-full" />
             </motion.a>
 

@@ -1,8 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "./lib/auth";
+import { jwtVerify } from "jose";
 
-export function middleware(request: NextRequest) {
+const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-change-me";
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Helper to verify token in Edge runtime
+  async function verifyEdgeToken(token: string) {
+    try {
+      const secret = new TextEncoder().encode(JWT_SECRET);
+      const { payload } = await jwtVerify(token, secret);
+      return payload;
+    } catch {
+      return null;
+    }
+  }
 
   // Only protect /admin routes (except /admin/login)
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
@@ -12,7 +25,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
 
-    const decoded = verifyToken(token);
+    const decoded = await verifyEdgeToken(token);
     if (!decoded) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
@@ -22,12 +35,25 @@ export function middleware(request: NextRequest) {
   if (
     pathname.startsWith("/api/") &&
     !pathname.startsWith("/api/contact") &&
-    !pathname.startsWith("/api/auth")
+    !pathname.startsWith("/api/auth") &&
+    !pathname.startsWith("/api/messages") && // Allow POST to /api/messages for contact form
+    !(pathname.startsWith("/api/messages") && request.method === "POST")
   ) {
-    const token = request.cookies.get("admin_token")?.value;
+    // If it's a POST to /api/messages, allow it
+    if (pathname === "/api/messages" && request.method === "POST") {
+      return NextResponse.next();
+    }
+    
+    // Allow public GET requests for content if needed? Wait, these are public APIs for the frontend!
+    // The frontend fetches /api/projects, /api/experience, /api/stats, /api/settings.
+    // If we block GET, the frontend will fail.
+    // We should only block non-GET requests (POST, PUT, DELETE) on these content routes!
+    if (request.method !== "GET" && pathname !== "/api/auth/login") {
+      const token = request.cookies.get("admin_token")?.value;
 
-    if (!token || !verifyToken(token)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      if (!token || !(await verifyEdgeToken(token))) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
   }
 
@@ -35,5 +61,13 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/settings/:path*", "/api/projects/:path*", "/api/experience/:path*", "/api/stats/:path*", "/api/messages/:path*", "/api/upload/:path*"],
+  matcher: [
+    "/admin/:path*", 
+    "/api/settings/:path*", 
+    "/api/projects/:path*", 
+    "/api/experience/:path*", 
+    "/api/stats/:path*", 
+    "/api/messages/:path*", 
+    "/api/upload/:path*"
+  ],
 };

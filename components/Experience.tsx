@@ -4,48 +4,52 @@ import { motion } from "framer-motion";
 import { Briefcase, GraduationCap } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 
-const EXPERIENCE = [
+import { Experience as ExperienceType } from "@prisma/client";
+
+const DEFAULT_EXPERIENCE: any[] = [
   {
-    type: "work" as const,
+    type: "work",
     role: "AI/ML Engineer Intern",
     company: "DevelopersHub Corporation",
     period: "Mar 2026 – May 2026",
-    bullets: [
+    bullets: JSON.stringify([
       "Developed and trained deep learning models for computer vision tasks including image classification and object detection",
       "Built end-to-end ML pipelines from data preprocessing to model deployment using TensorFlow and Python",
       "Collaborated with senior engineers to optimize model inference speed by 40% through quantization and TFLite conversion",
       "Implemented Grad-CAM visualizations for model explainability and stakeholder presentations",
-    ],
+    ]),
   },
   {
-    type: "work" as const,
+    type: "work",
     role: "Machine Learning Intern",
     company: "CodeAlpha",
     period: "Mar 2026 – Jun 2026",
-    bullets: [
+    bullets: JSON.stringify([
       "Designed and implemented predictive models using XGBoost and Scikit-learn for real-world datasets",
       "Created comprehensive data analysis pipelines with Pandas, NumPy, and Matplotlib",
       "Developed RESTful APIs with Flask/FastAPI to serve ML predictions in production environments",
       "Achieved R² scores above 0.89 on regression tasks through systematic hyperparameter tuning",
-    ],
+    ]),
   },
   {
-    type: "education" as const,
+    type: "education",
     role: "BS Computer Science",
     company: "University",
     period: "2022 – 2026 (Expected)",
-    bullets: [
+    bullets: JSON.stringify([
       "CGPA: 3.72/4.00 — 1st Position holder every semester",
       "Focus areas: Artificial Intelligence, Machine Learning, Data Structures & Algorithms",
       "Led multiple final-year projects involving computer vision and full-stack development",
       "Active participant in programming competitions and AI/ML workshops",
-    ],
+    ]),
   },
 ];
 
-export default function Experience() {
+export default function Experience({ experience }: { experience?: ExperienceType[] }) {
+  const displayExperience = experience?.length ? experience : DEFAULT_EXPERIENCE;
+
   return (
-    <section id="experience" className="relative py-[120px] lg:py-[160px]">
+    <section id="experience" className="relative py-[80px] lg:py-[100px]">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
         {/* Section Header */}
         <ScrollReveal>
@@ -69,9 +73,9 @@ export default function Experience() {
           <div className="absolute left-6 md:left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-violet/40 via-purple/30 to-coral/20" />
 
           <div className="space-y-12">
-            {EXPERIENCE.map((item, i) => (
+            {displayExperience.map((item, i) => (
               <motion.div
-                key={`${item.company}-${item.role}`}
+                key={`${item.company}-${item.role}-${i}`}
                 initial={{ x: -20, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 viewport={{ once: true, margin: "-60px" }}
@@ -108,7 +112,7 @@ export default function Experience() {
                   </div>
 
                   <ul className="space-y-2.5">
-                    {item.bullets.map((bullet, j) => (
+                    {(item.bullets ? JSON.parse(item.bullets) : []).map((bullet: string, j: number) => (
                       <li
                         key={j}
                         className="flex items-start gap-2.5 text-sm text-content-dim leading-relaxed"

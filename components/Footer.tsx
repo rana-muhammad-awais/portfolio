@@ -3,6 +3,7 @@
 import { Mail, ArrowUp } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./icons";
 import ScrollReveal from "./ScrollReveal";
+import { SiteSettings } from "../generated/prisma/client";
 
 const FOOTER_LINKS = [
   { label: "Home", href: "#home" },
@@ -12,28 +13,46 @@ const FOOTER_LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
-const SOCIAL_LINKS = [
-  {
-    icon: GithubIcon,
-    href: "https://github.com/muhammadawais",
-    label: "GitHub",
-  },
-  {
-    icon: LinkedinIcon,
-    href: "https://linkedin.com/in/muhammadawais",
-    label: "LinkedIn",
-  },
-  {
-    icon: Mail,
-    href: "mailto:awais@example.com",
-    label: "Email",
-  },
-];
-
-export default function Footer() {
+export default function Footer({ settings }: { settings?: SiteSettings | null }) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  
+  const socialLinks = settings ? [
+    {
+      icon: GithubIcon,
+      href: settings.githubUrl || "",
+      label: "GitHub",
+    },
+    {
+      icon: LinkedinIcon,
+      href: settings.linkedinUrl || "",
+      label: "LinkedIn",
+    },
+    {
+      icon: Mail,
+      href: `mailto:${settings.contactEmail}`,
+      label: "Email",
+    },
+  ] : [
+    {
+      icon: GithubIcon,
+      href: "https://github.com/muhammadawais",
+      label: "GitHub",
+    },
+    {
+      icon: LinkedinIcon,
+      href: "https://linkedin.com/in/muhammadawais",
+      label: "LinkedIn",
+    },
+    {
+      icon: Mail,
+      href: "mailto:awais@example.com",
+      label: "Email",
+    },
+  ];
+
+  const year = new Date().getFullYear();
 
   return (
     <footer className="relative pt-16 pb-8 bg-base border-t border-subtle">
@@ -43,11 +62,10 @@ export default function Footer() {
             {/* Logo */}
             <div>
               <a href="#home" className="text-2xl font-heading font-bold">
-                <span className="gradient-text">MA</span>
+                <span className="gradient-text">Muhammad Awais</span>
               </a>
               <p className="text-sm text-content-dim mt-2 max-w-xs">
-                AI/ML Engineer building intelligent systems that solve
-                real-world problems.
+                {settings?.heroSubtext || "AI/ML Engineer building intelligent systems that solve real-world problems."}
               </p>
             </div>
 
@@ -66,7 +84,7 @@ export default function Footer() {
 
             {/* Socials */}
             <div className="flex items-center gap-2">
-              {SOCIAL_LINKS.map((social) => (
+              {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
@@ -85,7 +103,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-subtle">
           <p className="text-xs text-content-dim/50">
-            © 2026 Muhammad Awais. All rights reserved.
+            © {year} Muhammad Awais. All rights reserved.
           </p>
 
           <button

@@ -58,7 +58,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-base text-content font-body transition-colors duration-300">
+      <body suppressHydrationWarning className="min-h-screen bg-base text-content font-body transition-colors duration-300">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

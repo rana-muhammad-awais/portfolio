@@ -1,6 +1,6 @@
 "use client";
 
-const TECH_ITEMS = [
+const DEFAULT_TECH_ITEMS = [
   "Python",
   "TensorFlow",
   "PyTorch",
@@ -23,8 +23,9 @@ const TECH_ITEMS = [
   "Jupyter",
 ];
 
-export default function Marquee() {
-  const items = [...TECH_ITEMS, ...TECH_ITEMS];
+export default function Marquee({ skills }: { skills?: string[] }) {
+  const displaySkills = skills?.length ? skills : DEFAULT_TECH_ITEMS;
+  const items = [...displaySkills, ...displaySkills];
 
   return (
     <section className="relative py-12 border-y border-subtle overflow-hidden">

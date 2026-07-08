@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Mail, ChevronDown, Sparkles, Code, Brain } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./icons";
 import MagneticButton from "./MagneticButton";
+import { SiteSettings } from "@prisma/client";
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
@@ -36,7 +37,7 @@ const fadeUp = {
   }),
 };
 
-const HEADLINE_WORDS = [
+const DEFAULT_HEADLINE = [
   { text: "I", gradient: false },
   { text: "Build", gradient: false },
   { text: "Machine", gradient: false },
@@ -91,7 +92,16 @@ const SOCIALS = [
   },
 ];
 
-export default function Hero() {
+export default function Hero({ 
+  settings, 
+  headline 
+}: { 
+  settings?: SiteSettings | null;
+  headline?: any[];
+}) {
+  const displayHeadline = headline?.length ? headline : DEFAULT_HEADLINE;
+  const profileImage = settings?.profileImageUrl || "/profile.png";
+  
   return (
     <section
       id="home"
@@ -108,20 +118,22 @@ export default function Hero() {
           {/* Left Content */}
           <div className="space-y-8">
             {/* Availability Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease }}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-card"
-            >
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-pulse-dot" />
-                <span className="relative rounded-full h-2.5 w-2.5 bg-emerald-400" />
-              </span>
-              <span className="text-sm text-content-dim font-medium">
-                Available for new opportunities
-              </span>
-            </motion.div>
+            {(!settings || settings.availabilityActive) && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease }}
+                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-card"
+              >
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inset-0 rounded-full bg-emerald-400 animate-pulse-dot" />
+                  <span className="relative rounded-full h-2.5 w-2.5 bg-emerald-400" />
+                </span>
+                <span className="text-sm text-content-dim font-medium">
+                  {settings?.availabilityText || "Available for new opportunities"}
+                </span>
+              </motion.div>
+            )}
 
             {/* Headline */}
             <motion.h1
@@ -133,7 +145,7 @@ export default function Hero() {
                 fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
               }}
             >
-              {HEADLINE_WORDS.map((word, i) => (
+              {displayHeadline.map((word, i) => (
                 <motion.span
                   key={i}
                   variants={wordVariants}
@@ -154,8 +166,7 @@ export default function Hero() {
               animate="visible"
               className="text-lg lg:text-xl text-content-dim max-w-lg leading-relaxed"
             >
-              AI/ML Engineer specializing in computer vision, predictive
-              modeling, and deploying ML solutions from research to production.
+              {settings?.heroSubtext || "AI/ML Engineer specializing in computer vision, predictive modeling, and deploying ML solutions from research to production."}
             </motion.p>
 
             {/* CTAs */}
@@ -184,7 +195,7 @@ export default function Hero() {
 
               <MagneticButton strength={8}>
                 <a
-                  href="/resume.pdf"
+                  href={settings?.cvUrl || "/resume.pdf"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-content rounded-full border border-subtle hover:bg-[var(--subtle-hover)] transition-all duration-300"
@@ -232,14 +243,15 @@ export default function Hero() {
           >
             <div className="relative w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px]">
               {/* Unified glow card — gradient shadow matches the rounded card shape */}
-              <div className="hero-glow relative z-10 w-full h-full rounded-[32px] overflow-hidden border border-[var(--glass-card-border)] shadow-2xl">
+              <div className="hero-glow relative z-10 w-full h-full rounded-[32px] overflow-hidden shadow-2xl">
                 <Image
-                  src="/profile.png"
+                  src={profileImage}
                   alt="Muhammad Awais"
                   fill
                   sizes="(max-width: 640px) 300px, (max-width: 1024px) 380px, 440px"
                   priority
                   className="object-cover"
+                  unoptimized={profileImage.includes('cloudinary')}
                 />
               </div>
 

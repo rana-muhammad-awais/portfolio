@@ -5,57 +5,58 @@ import { ExternalLink, ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "./icons";
 import ScrollReveal from "./ScrollReveal";
 
-const PROJECTS = [
+import { Project } from "@prisma/client";
+
+const DEFAULT_PROJECTS: any[] = [
   {
     title: "CarpSense",
     subtitle: "AI-Powered Fish Species Classifier",
     description:
       "EfficientNetV2S model classifying 16 carp species and detecting 7 diseases with Grad-CAM explainability. Deployed via TFLite on Flutter with a bilingual Urdu/English interface.",
-    tags: [
+    tags: JSON.stringify([
       "EfficientNetV2S",
       "TFLite",
       "Flutter",
       "Grad-CAM",
       "Transfer Learning",
-    ],
+    ]),
     gradient: "from-coral/20 via-purple/10 to-violet/20",
-    accent: "bg-coral",
-    github: "#",
-    live: "#",
+    githubUrl: "#",
+    liveUrl: "#",
   },
   {
     title: "CellSafe",
     subtitle: "AI Pre-Owned Mobile Marketplace",
     description:
       "Full-featured marketplace with XGBoost-powered price prediction (R² ≈ 0.90), computer-vision-based device condition assessment, and real-time chat. Built with Flutter and Firebase.",
-    tags: [
+    tags: JSON.stringify([
       "XGBoost",
       "Computer Vision",
       "Flutter",
       "Firebase",
       "Price Prediction",
-    ],
+    ]),
     gradient: "from-purple/20 via-violet/10 to-coral/20",
-    accent: "bg-purple",
-    github: "#",
-    live: "#",
+    githubUrl: "#",
+    liveUrl: "#",
   },
   {
     title: "Apna Bhatta",
     subtitle: "Full-Stack Brick Kiln Management",
     description:
       "Production-grade platform built on Next.js 15 + TypeScript + PostgreSQL/Prisma. Features JWT authentication, role-based access control, GPS tracking, and comprehensive reporting.",
-    tags: ["Next.js 15", "TypeScript", "PostgreSQL", "Prisma", "JWT", "RBAC"],
+    tags: JSON.stringify(["Next.js 15", "TypeScript", "PostgreSQL", "Prisma", "JWT", "RBAC"]),
     gradient: "from-violet/20 via-coral/10 to-purple/20",
-    accent: "bg-violet",
-    github: "#",
-    live: "#",
+    githubUrl: "#",
+    liveUrl: "#",
   },
 ];
 
-export default function Projects() {
+export default function Projects({ projects }: { projects?: Project[] }) {
+  const displayProjects = projects?.length ? projects : DEFAULT_PROJECTS;
+  
   return (
-    <section id="projects" className="relative py-[120px] lg:py-[160px] bg-surface/50">
+    <section id="projects" className="relative py-[80px] lg:py-[100px] bg-surface/50">
       {/* Background accent */}
       <div className="absolute top-0 left-0 right-0 h-px bg-subtle" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-subtle" />
@@ -79,7 +80,7 @@ export default function Projects() {
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PROJECTS.map((project, i) => (
+          {displayProjects.map((project, i) => (
             <motion.div
               key={project.title}
               initial={{ y: 40, opacity: 0 }}
@@ -93,28 +94,42 @@ export default function Projects() {
               className="group relative"
             >
               <div className="relative h-full rounded-3xl border border-subtle overflow-hidden bg-surface hover:border-violet/20 transition-all duration-500">
-                {/* Image area / gradient placeholder */}
-                <div
-                  className={`relative h-48 bg-gradient-to-br ${project.gradient} overflow-hidden`}
-                >
-                  <div className="absolute inset-0 bg-[var(--overlay-bg)]" />
+                  {/* Image area / gradient placeholder */}
+                  {project.imageUrl ? (
+                    <div className="relative h-48 overflow-hidden">
+                      <img src={project.imageUrl} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-[var(--overlay-bg)]" />
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      {/* View project label */}
+                      <motion.div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-sm font-medium text-white drop-shadow-md opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-400">
+                        View Project
+                        <ArrowUpRight size={14} />
+                      </motion.div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`relative h-48 bg-gradient-to-br ${project.gradient} overflow-hidden`}
+                    >
+                      <div className="absolute inset-0 bg-[var(--overlay-bg)]" />
 
-                  {/* Project title overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-5xl font-heading font-bold text-content/10 group-hover:text-content/20 transition-all duration-500 group-hover:scale-110">
-                      {project.title[0]}
-                    </span>
-                  </div>
+                      {/* Project title overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-5xl font-heading font-bold text-content/10 group-hover:text-content/20 transition-all duration-500 group-hover:scale-110">
+                          {project.title[0]}
+                        </span>
+                      </div>
 
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                  {/* View project label */}
-                  <motion.div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-sm font-medium text-content opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-400">
-                    View Project
-                    <ArrowUpRight size={14} />
-                  </motion.div>
-                </div>
+                      {/* View project label */}
+                      <motion.div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-sm font-medium text-content opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-400">
+                        View Project
+                        <ArrowUpRight size={14} />
+                      </motion.div>
+                    </div>
+                  )}
 
                 {/* Content */}
                 <div className="p-6 space-y-4">
@@ -133,7 +148,7 @@ export default function Projects() {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
+                    {(project.tags ? JSON.parse(project.tags) : []).map((tag: string) => (
                       <span
                         key={tag}
                         className="px-2.5 py-1 text-[11px] font-medium text-content-dim/80 bg-[var(--tag-bg)] rounded-md border border-subtle"
@@ -145,24 +160,28 @@ export default function Projects() {
 
                   {/* Links */}
                   <div className="flex items-center gap-3 pt-2">
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${project.title} GitHub repository`}
-                      className="p-2.5 rounded-xl text-content-dim hover:text-content hover:bg-[var(--subtle-hover-strong)] transition-all duration-300"
-                    >
-                      <GithubIcon width={18} height={18} />
-                    </a>
-                    <a
-                      href={project.live}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${project.title} live demo`}
-                      className="p-2.5 rounded-xl text-content-dim hover:text-content hover:bg-[var(--subtle-hover-strong)] transition-all duration-300"
-                    >
-                      <ExternalLink size={18} />
-                    </a>
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${project.title} GitHub repository`}
+                        className="p-2.5 rounded-xl text-content-dim hover:text-content hover:bg-[var(--subtle-hover-strong)] transition-all duration-300"
+                      >
+                        <GithubIcon width={18} height={18} />
+                      </a>
+                    )}
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${project.title} live demo`}
+                        className="p-2.5 rounded-xl text-content-dim hover:text-content hover:bg-[var(--subtle-hover-strong)] transition-all duration-300"
+                      >
+                        <ExternalLink size={18} />
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

@@ -4,14 +4,16 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 
-const STATS = [
+import { SiteSettings, Stat } from "@prisma/client";
+
+const DEFAULT_STATS = [
   { value: 3.72, label: "CGPA", suffix: "/4.00", decimals: 2 },
   { value: 1, label: "Position Every Semester", suffix: "st", decimals: 0 },
   { value: 2, label: "ML Internships", suffix: "+", decimals: 0 },
   { value: 3, label: "Major Projects", suffix: "+", decimals: 0 },
 ];
 
-const SKILLS = [
+const DEFAULT_SKILLS = [
   "Computer Vision",
   "Deep Learning",
   "NLP",
@@ -26,6 +28,14 @@ const SKILLS = [
   "REST APIs",
   "Full-Stack Development",
 ];
+
+// Helper to parse basic markdown (**bold** and \n\n)
+function parseMarkdown(text: string) {
+  let html = text.replace(/\*\*(.*?)\*\*/g, '<span class="text-content font-semibold">$1</span>');
+  html = html.replace(/\n\n/g, '</p><p class="mt-4">');
+  html = html.replace(/\n/g, '<br/>');
+  return `<p>${html}</p>`;
+}
 
 function CountUpNumber({
   target,
@@ -88,9 +98,22 @@ function CountUpNumber({
   );
 }
 
-export default function About() {
+export default function About({
+  settings,
+  stats,
+}: {
+  settings?: SiteSettings | null;
+  stats?: Stat[];
+}) {
+  const displayStats = stats?.length ? stats : DEFAULT_STATS;
+  const displaySkills = settings?.aboutSkills ? JSON.parse(settings.aboutSkills) : DEFAULT_SKILLS;
+  
+  const defaultBio = `I'm Muhammad Awais, an **AI/ML Engineer** passionate about building intelligent systems that solve real-world problems. I specialize in **computer vision**, **deep learning**, and **predictive analytics**, with hands-on experience deploying ML models to production using modern frameworks and pipelines.\n\nFrom training **EfficientNet models** for species classification to building **XGBoost pricing engines** and shipping full-stack platforms with **Next.js + Prisma**, I bridge the gap between ML research and production-ready software. Currently pursuing my BSCS with a **3.72 CGPA**, securing 1st position every semester.`;
+  
+  const bioHtml = parseMarkdown(settings?.aboutBio || defaultBio);
+  
   return (
-    <section id="about" className="relative py-[120px] lg:py-[160px]">
+    <section id="about" className="relative py-[80px] lg:py-[100px]">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
         {/* Section Header */}
         <ScrollReveal>
@@ -112,54 +135,16 @@ export default function About() {
           {/* Bio */}
           <div className="lg:col-span-3 space-y-6">
             <ScrollReveal delay={0.1}>
-              <p className="text-lg leading-relaxed text-content-dim">
-                I&apos;m Muhammad Awais, an{" "}
-                <span className="text-content font-semibold">
-                  AI/ML Engineer
-                </span>{" "}
-                passionate about building intelligent systems that solve
-                real-world problems. I specialize in{" "}
-                <span className="text-content font-semibold">
-                  computer vision
-                </span>
-                ,{" "}
-                <span className="text-content font-semibold">
-                  deep learning
-                </span>
-                , and{" "}
-                <span className="text-content font-semibold">
-                  predictive analytics
-                </span>
-                , with hands-on experience deploying ML models to production
-                using modern frameworks and pipelines.
-              </p>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.2}>
-              <p className="text-lg leading-relaxed text-content-dim">
-                From training{" "}
-                <span className="text-content font-semibold">
-                  EfficientNet models
-                </span>{" "}
-                for species classification to building{" "}
-                <span className="text-content font-semibold">
-                  XGBoost pricing engines
-                </span>{" "}
-                and shipping full-stack platforms with{" "}
-                <span className="text-content font-semibold">
-                  Next.js + Prisma
-                </span>
-                , I bridge the gap between ML research and production-ready
-                software. Currently pursuing my BSCS with a{" "}
-                <span className="text-content font-semibold">3.72 CGPA</span>,
-                securing 1st position every semester.
-              </p>
+              <div 
+                className="text-lg leading-relaxed text-content-dim [&>p]:mb-4 last:[&>p]:mb-0"
+                dangerouslySetInnerHTML={{ __html: bioHtml }}
+              />
             </ScrollReveal>
 
             {/* Skill Pills */}
             <ScrollReveal delay={0.3}>
               <div className="flex flex-wrap gap-2 pt-4">
-                {SKILLS.map((skill, i) => (
+                {displaySkills.map((skill: string, i: number) => (
                   <motion.span
                     key={skill}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -181,7 +166,7 @@ export default function About() {
 
           {/* Stats Grid */}
           <div className="lg:col-span-2 grid grid-cols-2 gap-4">
-            {STATS.map((stat, i) => (
+            {displayStats.map((stat, i) => (
               <ScrollReveal key={stat.label} delay={0.2 + i * 0.1}>
                 <div className="glass-card rounded-2xl p-6 text-center hover:border-violet/20 transition-colors duration-300 group">
                   <div className="text-3xl lg:text-4xl font-heading font-bold gradient-text mb-2">

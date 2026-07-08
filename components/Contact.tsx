@@ -6,6 +6,7 @@ import { Mail, MapPin, Send } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./icons";
 import ScrollReveal from "./ScrollReveal";
 import MagneticButton from "./MagneticButton";
+import { SiteSettings } from "../generated/prisma/client";
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
@@ -30,7 +31,7 @@ const wordVariants = {
 
 const CTA_WORDS = ["Let's", "Build", "Something", "Amazing", "Together."];
 
-const CONTACT_INFO = [
+const DEFAULT_CONTACT_INFO = [
   {
     icon: Mail,
     label: "Email",
@@ -57,23 +58,70 @@ const CONTACT_INFO = [
   },
 ];
 
-export default function Contact() {
+export default function Contact({ settings }: { settings?: SiteSettings | null }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Wire up to an API route or service (e.g. Resend, EmailJS)
-    console.log("Form submitted:", formData);
+    setStatus("loading");
+    
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      
+      if (res.ok) {
+        setStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+        setTimeout(() => setStatus("idle"), 3000);
+      } else {
+        setStatus("error");
+        setTimeout(() => setStatus("idle"), 3000);
+      }
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
+    }
   };
+
+  const contactInfo = settings ? [
+    {
+      icon: Mail,
+      label: "Email",
+      value: settings.contactEmail,
+      href: `mailto:${settings.contactEmail}`,
+    },
+    {
+      icon: MapPin,
+      label: "Location",
+      value: settings.contactLocation,
+      href: null,
+    },
+    {
+      icon: LinkedinIcon,
+      label: "LinkedIn",
+      value: (settings.linkedinUrl || "").replace("https://", ""),
+      href: settings.linkedinUrl || "",
+    },
+    {
+      icon: GithubIcon,
+      label: "GitHub",
+      value: (settings.githubUrl || "").replace("https://", ""),
+      href: settings.githubUrl || "",
+    },
+  ] : DEFAULT_CONTACT_INFO;
 
   return (
     <section
       id="contact"
-      className="relative py-[120px] lg:py-[160px] bg-surface/50"
+      className="relative py-[80px] lg:py-[100px] bg-surface/50"
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-subtle" />
 
@@ -138,7 +186,7 @@ export default function Contact() {
             </ScrollReveal>
 
             <div className="space-y-4">
-              {CONTACT_INFO.map((info, i) => (
+              {contactInfo.map((info, i) => (
                 <ScrollReveal key={info.label} delay={0.2 + i * 0.08}>
                   <div className="group flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-[var(--input-bg)] border border-subtle flex items-center justify-center group-hover:border-violet/30 group-hover:bg-violet/[0.06] transition-all duration-300">
@@ -244,10 +292,13 @@ export default function Contact() {
                 <button
                   suppressHydrationWarning
                   type="submit"
-                  className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-semibold text-white rounded-xl gradient-bg hover:shadow-xl hover:shadow-violet/20 transition-all duration-400 cursor-pointer"
+                  disabled={status === "loading" || status === "success"}
+                  className={`w-full inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-semibold text-white rounded-xl transition-all duration-400 ${
+                    status === "success" ? "bg-emerald-500" : "gradient-bg hover:shadow-xl hover:shadow-violet/20"
+                  }`}
                 >
-                  Send Message
-                  <Send size={16} />
+                  {status === "loading" ? "Sending..." : status === "success" ? "Message Sent!" : "Send Message"}
+                  {status !== "success" && <Send size={16} />}
                 </button>
               </MagneticButton>
             </form>
