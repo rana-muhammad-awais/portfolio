@@ -96,7 +96,13 @@ export default function Projects({ projects }: { projects?: Project[] }) {
               <div className="relative h-full rounded-3xl border border-subtle overflow-hidden bg-surface hover:border-violet/20 transition-all duration-500">
                   {/* Image area / gradient placeholder */}
                   {project.imageUrl ? (
-                    <div className="relative h-48 overflow-hidden">
+                    <a 
+                      href={project.liveUrl || project.githubUrl || "#"}
+                      target={project.liveUrl || project.githubUrl ? "_blank" : undefined}
+                      rel={project.liveUrl || project.githubUrl ? "noopener noreferrer" : undefined}
+                      onClick={(e) => { if (!project.liveUrl && !project.githubUrl) e.preventDefault(); }}
+                      className="block relative h-48 overflow-hidden"
+                    >
                       <img src={project.imageUrl} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-[var(--overlay-bg)]" />
                       {/* Hover overlay */}
@@ -106,10 +112,14 @@ export default function Projects({ projects }: { projects?: Project[] }) {
                         View Project
                         <ArrowUpRight size={14} />
                       </motion.div>
-                    </div>
+                    </a>
                   ) : (
-                    <div
-                      className={`relative h-48 bg-gradient-to-br ${project.gradient} overflow-hidden`}
+                    <a
+                      href={project.liveUrl || project.githubUrl || "#"}
+                      target={project.liveUrl || project.githubUrl ? "_blank" : undefined}
+                      rel={project.liveUrl || project.githubUrl ? "noopener noreferrer" : undefined}
+                      onClick={(e) => { if (!project.liveUrl && !project.githubUrl) e.preventDefault(); }}
+                      className={`block relative h-48 bg-gradient-to-br ${project.gradient} overflow-hidden`}
                     >
                       <div className="absolute inset-0 bg-[var(--overlay-bg)]" />
 
@@ -128,7 +138,7 @@ export default function Projects({ projects }: { projects?: Project[] }) {
                         View Project
                         <ArrowUpRight size={14} />
                       </motion.div>
-                    </div>
+                    </a>
                   )}
 
                 {/* Content */}
