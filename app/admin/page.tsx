@@ -97,7 +97,7 @@ export default async function AdminDashboard() {
           </div>
         ) : (
           <div className="divide-y divide-subtle">
-            {recentMessages.map((msg) => (
+            {recentMessages.map((msg: any) => (
               <div key={msg.id} className={`p-6 flex items-start gap-4 transition-colors ${!msg.read ? 'bg-[var(--subtle-hover)]' : ''}`}>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
