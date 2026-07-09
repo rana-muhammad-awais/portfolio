@@ -6,7 +6,7 @@ import { Menu, X, Sun, Moon } from "lucide-react";
 import MagneticButton from "./MagneticButton";
 import { useTheme } from "./ThemeProvider";
 
-import { SiteSettings } from "../generated/prisma/client";
+import { SiteSettings } from "@prisma/client";
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },

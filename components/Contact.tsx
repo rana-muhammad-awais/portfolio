@@ -6,7 +6,7 @@ import { Mail, MapPin, Send } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./icons";
 import ScrollReveal from "./ScrollReveal";
 import MagneticButton from "./MagneticButton";
-import { SiteSettings } from "../generated/prisma/client";
+import { SiteSettings } from "@prisma/client";
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
 

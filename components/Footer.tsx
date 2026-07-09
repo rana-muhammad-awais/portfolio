@@ -3,7 +3,7 @@
 import { Mail, ArrowUp } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./icons";
 import ScrollReveal from "./ScrollReveal";
-import { SiteSettings } from "../generated/prisma/client";
+import { SiteSettings } from "@prisma/client";
 
 const FOOTER_LINKS = [
   { label: "Home", href: "#home" },
