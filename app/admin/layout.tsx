@@ -9,6 +9,7 @@ import {
   MessageSquare,
   LogOut,
   ChevronLeft,
+  Activity,
 } from "lucide-react";
 import ThemeProvider from "@/components/ThemeProvider";
 
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { label: "Settings", href: "/admin/settings", icon: Settings },
   { label: "Projects", href: "/admin/projects", icon: FolderOpen },
   { label: "Experience", href: "/admin/experience", icon: Briefcase },
+  { label: "Stats", href: "/admin/stats", icon: Activity },
   { label: "Messages", href: "/admin/messages", icon: MessageSquare },
 ];
 
