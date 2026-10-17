@@ -3,7 +3,7 @@ import ThemeProvider from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Muhammad Awais — AI/ML Engineer",
+  title: "Muhammad Awais",
   description:
     "I build machine learning systems that see, predict, and ship. Portfolio of Muhammad Awais — AI/ML Engineer specializing in computer vision, predictive modeling, and full-stack deployment.",
   keywords: [
