@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Muhammad Awais",
   ],
   openGraph: {
-    title: "Muhammad Awais — AI/ML Engineer",
+    title: "Muhammad Awais",
     description:
       "I build machine learning systems that see, predict, and ship.",
     type: "website",

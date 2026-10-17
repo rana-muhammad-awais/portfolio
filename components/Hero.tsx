@@ -53,7 +53,7 @@ const DEFAULT_HEADLINE = [
 const FLOATING_BADGES = [
   {
     icon: Sparkles,
-    text: "AI/ML Engineer",
+    text: "Full Stack Developer",
     position: "-top-4 -right-4 lg:-right-8",
     delay: 0.8,
     animation: "animate-float-1",
